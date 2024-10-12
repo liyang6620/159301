@@ -1,31 +1,24 @@
 import streamlit as st
 import pandas as pd
 import pydeck as pdk
+import xgboost as xgb
+
+loaded_model = xgb.Booster()
+loaded_model.load_model('xgboost-model-0')
 
 st.title("简单的计算器")
 
-# 用户输入
+
 num1 = st.number_input("输入第一个数字", value=0.0, step=0.1)
 num2 = st.number_input("输入第二个数字", value=0.0, step=0.1)
+num3 = st.number_input("输入第二个数字", value=0.0, step=0.1)
+input_data = np.array([[num1, num2, num3]])
 
-# 算术运算选择
-operation = st.selectbox("选择操作", ("加法", "减法", "乘法", "除法"))
-
-# 计算结果
-if operation == "加法":
-    result = num1 + num2
-elif operation == "减法":
-    result = num1 - num2
-elif operation == "乘法":
-    result = num1 * num2
-elif operation == "除法":
-    if num2 != 0:
-        result = num1 / num2
-    else:
-        result = "除数不能为0！"
-
-# 显示结果
-st.write("结果是: ", result)
+# 使用模型进行预测
+if st.button("进行预测"):
+    dmatrix = xgb.DMatrix(input_data)
+    prediction = loaded_model.predict(dmatrix)
+    st.write(f"预测结果是: {prediction[0]}")
 
 
 data = {
