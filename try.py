@@ -13,10 +13,11 @@ st.title("简单的计算器")
 num1 = st.number_input("输入第一个数字", value=0.0, step=0.1)
 num2 = st.number_input("输入第二个数字", value=0.0, step=0.1)
 num3 = st.number_input("输入第三个数字", value=0.0, step=0.1)
-input_data = np.array([[num1, num2, num3]])
+
 
 # 使用模型进行预测
 if st.button("进行预测"):
+    input_data = np.array([[num1, num2, num3]])
     dmatrix = xgb.DMatrix(input_data)
     prediction = loaded_model.predict(dmatrix)
     st.write(f"预测结果是: {prediction[0]}")
