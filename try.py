@@ -2,7 +2,32 @@ import streamlit as st
 import pandas as pd
 import pydeck as pdk
 
-# 示例数据，假设这是新西兰各城市的租金数据
+st.title("简单的计算器")
+
+# 用户输入
+num1 = st.number_input("输入第一个数字", value=0.0, step=0.1)
+num2 = st.number_input("输入第二个数字", value=0.0, step=0.1)
+
+# 算术运算选择
+operation = st.selectbox("选择操作", ("加法", "减法", "乘法", "除法"))
+
+# 计算结果
+if operation == "加法":
+    result = num1 + num2
+elif operation == "减法":
+    result = num1 - num2
+elif operation == "乘法":
+    result = num1 * num2
+elif operation == "除法":
+    if num2 != 0:
+        result = num1 / num2
+    else:
+        result = "除数不能为0！"
+
+# 显示结果
+st.write("结果是: ", result)
+
+
 data = {
     'City': ['Auckland', 'Wellington', 'Christchurch', 'Hamilton', 'Tauranga'],
     'Latitude': [-36.8485, -41.2865, -43.5321, -37.7870, -37.6878],
@@ -12,10 +37,9 @@ data = {
 
 df = pd.DataFrame(data)
 
-# 设置地图视图
 view_state = pdk.ViewState(latitude=-40.9006, longitude=174.8860, zoom=5)
 
-# 创建地图图层
+
 layer = pdk.Layer(
     'ScatterplotLayer',
     data=df,
@@ -25,7 +49,6 @@ layer = pdk.Layer(
     pickable=True
 )
 
-# Tooltip 用于展示更多信息
 tooltip={
     "html": "<b>City:</b> {City}<br><b>Average Rent:</b> ${Average Rent}",
     "style": {
@@ -34,12 +57,11 @@ tooltip={
     }
 }
 
-# 使用 pydeck_chart 渲染地图
 st.pydeck_chart(pdk.Deck(
     initial_view_state=view_state,
     layers=[layer],
     tooltip=tooltip
 ))
 
-# 可选：显示数据表格
+
 st.dataframe(df)
