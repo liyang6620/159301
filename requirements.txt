@@ -28,3 +28,4 @@ tzdata==2024.2
 urllib3==2.2.3
 watchdog==4.0.2
 xgboost==1.6.0
+setuptools
