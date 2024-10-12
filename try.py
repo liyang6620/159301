@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import pydeck as pdk
 import xgboost as xgb
+import numpy as np
 
 loaded_model = xgb.Booster()
 loaded_model.load_model('xgboost-model-0')
