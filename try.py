@@ -41,7 +41,10 @@ loaded_model.load_model('xgboost-model-0')
 st.title("Crime and Rent")
 
 
-selected_date = st.date_input("Select date", dt.today())
+years_range = list(range(2025, 2034))  
+months_range = list(range(1, 13))
+selected_year = st.selectbox("Year", years_range)
+selected_month = st.selectbox("Month", months_range)
 num2 = st.number_input("输入第二个数字", value=0.0, step=0.1)
 num3 = st.number_input("输入第三个数字", value=0.0, step=0.1)
 
