@@ -34,6 +34,7 @@ for location in total_sentences_predictions['Region'].unique():
     total_sentences_predictions_monthly = pd.concat([total_sentences_predictions_monthly, interpolated_data])
 
 total_sentences_predictions_monthly.reset_index(drop=True, inplace=True)
+total_sentences_predictions_monthly['Location'] = total_sentences_predictions_monthly['Location'].apply(lambda x: x if x == 'ALL' else x.replace(" Region", ""))
 
 loaded_model = xgb.Booster()
 loaded_model.load_model('xgboost-model-0')
@@ -60,7 +61,7 @@ crime = st.number_input("Crime", value=0.0, step=0.1)
 location_id = location_df[location_df['Location'] == location]['Location Id'].values[0]
 
 selected_date = pd.to_datetime(f'{selected_year}-{selected_month}-01')
-selected_df = total_sentences_predictions_monthly[(total_sentences_predictions_monthly['Date'] <= selected_date) & (total_sentences_predictions_monthly['Location'] == selected_location)]
+selected_df = total_sentences_predictions_monthly[(total_sentences_predictions_monthly['Date'] <= selected_date) & (total_sentences_predictions_monthly['Location'] == location)]
 
 st.write(location_id)
 
