@@ -3,6 +3,7 @@ import pandas as pd
 import pydeck as pdk
 import xgboost as xgb
 import numpy as np
+import datetime as dt
 from scipy.interpolate import CubicSpline
 
 predictions = pd.read_csv('predictions.csv')
@@ -40,7 +41,7 @@ loaded_model.load_model('xgboost-model-0')
 st.title("Crime and Rent")
 
 
-selected_date = st.date_input("Select date", datetime.today())
+selected_date = st.date_input("Select date", dt.today())
 num2 = st.number_input("输入第二个数字", value=0.0, step=0.1)
 num3 = st.number_input("输入第三个数字", value=0.0, step=0.1)
 
