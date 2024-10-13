@@ -3,6 +3,36 @@ import pandas as pd
 import pydeck as pdk
 import xgboost as xgb
 import numpy as np
+from scipy.interpolate import CubicSpline
+
+predictions = pd.read_csv('predictions.csv')
+total_sentences_predictions = predictions[predictions['Target'] == 'Total Sentences'].sort_values(['Year','Region'])
+total_sentences_predictions = total_sentences_predictions.loc[total_sentences_predictions.groupby(['Year', 'Region'])['MSE'].idxmin()]
+
+total_sentences_predictions['Date'] = pd.to_datetime(total_sentences_predictions['Year'], format='%Y') + pd.offsets.YearBegin(0)
+total_sentences_predictions.set_index('Date', inplace=True)
+total_sentences_predictions_monthly = pd.DataFrame()
+
+for location in total_sentences_predictions['Region'].unique():
+    total_sentences_predictions_location = total_sentences_predictions[total_sentences_predictions['Region'] == location]
+
+    years = total_sentences_predictions_location.index.year
+    total_sentences_predictionse_values = total_sentences_predictions_location['Predicted']
+
+    months = pd.date_range(start=str(years.min()), end=str(years.max() + 1), freq='MS')
+
+    spline = CubicSpline(years, total_sentences_predictionse_values)
+    interpolated_total_sentences = spline(months.year + months.month / 12)
+
+    interpolated_data = pd.DataFrame({
+        'Date': months,
+        'Location': location,
+        'Crime': interpolated_total_sentences
+    })
+
+    total_sentences_predictions_monthly = pd.concat([total_sentences_predictions_monthly, interpolated_data])
+
+total_sentences_predictions_monthly.reset_index(drop=True, inplace=True)
 
 loaded_model = xgb.Booster()
 loaded_model.load_model('xgboost-model-0')
@@ -59,4 +89,4 @@ st.pydeck_chart(pdk.Deck(
 ))
 
 
-st.dataframe(df)
+st.dataframe(total_sentences_predictions_monthly)
