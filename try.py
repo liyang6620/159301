@@ -35,6 +35,9 @@ for location in total_sentences_predictions['Region'].unique():
 
 total_sentences_predictions_monthly.reset_index(drop=True, inplace=True)
 total_sentences_predictions_monthly['Location'] = total_sentences_predictions_monthly['Location'].apply(lambda x: x if x == 'ALL' else x.replace(" Region", ""))
+total_sentences_predictions_monthly['Crime'] = pd.to_numeric(
+    total_sentences_predictions_monthly['Crime'].astype(str).str.replace(',', ''), errors='coerce'
+)
 
 loaded_model = xgb.Booster()
 loaded_model.load_model('xgboost-model-0')
