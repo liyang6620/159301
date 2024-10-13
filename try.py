@@ -35,9 +35,7 @@ for location in total_sentences_predictions['Region'].unique():
 
 total_sentences_predictions_monthly.reset_index(drop=True, inplace=True)
 total_sentences_predictions_monthly['Location'] = total_sentences_predictions_monthly['Location'].apply(lambda x: x if x == 'ALL' else x.replace(" Region", ""))
-total_sentences_predictions_monthly['Crime'] = pd.to_numeric(
-    total_sentences_predictions_monthly['Crime'].astype(str).str.replace(',', ''), errors='coerce'
-)
+
 
 loaded_model = xgb.Booster()
 loaded_model.load_model('xgboost-model-0')
@@ -65,6 +63,9 @@ location_id = location_df[location_df['Location'] == location]['Location Id'].va
 selected_date = pd.to_datetime(f'{selected_year}-{selected_month}-01')
 if location == "All":
     selected_df = total_sentences_predictions_monthly[(total_sentences_predictions_monthly['Date'] <= selected_date)]
+    selected_df['Crime'] = pd.to_numeric(
+    selected_df['Crime'].astype(str).str.replace(',', ''), errors='coerce'
+    )
     selected_df_grouped = selected_df.groupby('Location')
     selected_df['Crime_Rolling_Std_3'] = selected_df_grouped['Crime'].apply(lambda x: x.rolling(3,1).std()).reset_index(level=0, drop=True)
     selected_df['Crime_Rolling_Std_6'] = selected_df_grouped['Crime'].apply(lambda x: x.rolling(6,1).std()).reset_index(level=0, drop=True)
