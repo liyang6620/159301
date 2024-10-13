@@ -60,7 +60,7 @@ crime = st.number_input("Crime", value=0.0, step=0.1)
 location_id = location_df[location_df['Location'] == location]['Location Id'].values[0]
 
 selected_date = pd.to_datetime(f'{selected_year}-{selected_month}-01')
-if location == 'ALL':
+if location == "ALL":
     selected_df = total_sentences_predictions_monthly[(total_sentences_predictions_monthly['Date'] <= selected_date)]
 else:
     selected_df = total_sentences_predictions_monthly[(total_sentences_predictions_monthly['Date'] <= selected_date) & (total_sentences_predictions_monthly['Location'] == location)]
