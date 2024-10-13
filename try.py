@@ -40,11 +40,10 @@ loaded_model = xgb.Booster()
 loaded_model.load_model('xgboost-model-0')
 
 location_data = {
-    'Location Id': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18],
+    'Location Id': [0, 1, 2, 3, 4, 5 , 7, 8, 9, 13, 14, 15],
     'Location': ['All','Northland', 'Auckland', 'Waikato', 'Bay of Plenty', 'Gisborne', 
-                 'Hawke\'s Bay', 'Taranaki', 'Manawatu-Whanganui', 'Wellington', 
-                 'West Coast', 'Canterbury', 'Otago', 'Southland', 'Tasman', 'Nelson', 
-                 'Marlborough']
+                  'Taranaki', 'Manawatu-Wanganui', 'Wellington', 
+                  'Canterbury', 'Otago', 'Southland']
 }
 
 location_df = pd.DataFrame(location_data)
