@@ -38,6 +38,16 @@ total_sentences_predictions_monthly.reset_index(drop=True, inplace=True)
 loaded_model = xgb.Booster()
 loaded_model.load_model('xgboost-model-0')
 
+location_data = {
+    'Location Id': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18],
+    'Location': ['All','Northland', 'Auckland', 'Waikato', 'Bay of Plenty', 'Gisborne', 
+                 'Hawke\'s Bay', 'Taranaki', 'Manawatu-Whanganui', 'Wellington', 
+                 'West Coast', 'Canterbury', 'Otago', 'Southland', 'Tasman', 'Nelson', 
+                 'Marlborough']
+}
+
+location_df = pd.DataFrame(location_data)
+
 st.title("Crime and Rent")
 
 
@@ -45,10 +55,11 @@ years_range = list(range(2025, 2034))
 months_range = list(range(1, 13))
 selected_year = st.selectbox("Year", years_range)
 selected_month = st.selectbox("Month", months_range)
+
 num2 = st.number_input("输入第二个数字", value=0.0, step=0.1)
 num3 = st.number_input("输入第三个数字", value=0.0, step=0.1)
 
-st.write(selected_date)
+st.write(selected_year)
 
 
 data = {
@@ -87,4 +98,4 @@ st.pydeck_chart(pdk.Deck(
 ))
 
 
-st.dataframe(total_sentences_predictions_monthly)
+st.dataframe(location_df)
