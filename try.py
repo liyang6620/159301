@@ -68,16 +68,11 @@ else:
 st.write(location_id)
 
 data = {
-    'Location': ['Northland', 'Auckland', 'Waikato', 'Bay of Plenty', 'Gisborne', 
-                 'Hawke\'s Bay', 'Taranaki', 'Manawatu-Whanganui', 'Wellington', 
-                 'West Coast', 'Canterbury', 'Otago', 'Southland'],
-    'Latitude': [-35.717, -36.8485, -37.7870, -37.6878, -38.6623, -39.4917, -39.0599,
-                 -40.3564, -41.2865, -42.7157, -43.5321, -45.8788, -46.4132, -41.2924],
-    'Longitude': [174.3237, 174.7633, 175.2830, 176.1651, 178.0228, 176.8506, 174.2405,
-                  175.6110, 174.7762, 170.4634, 172.6362, 170.5036, 168.3475, 173.1853],
-    'Average Rent': np.random.randint(1000, 3000, size=16)  # 随机生成租金数据
+    'Date': pd.date_range(start='2025-01-01', periods=10, freq='MS'),
+    'Location': ['ALL'] * 10,  # 可以根据实际数据更改 Location
+    'Crime': [66233.0164, 65955.7842, 65714.9403, 65508.0699, 65332.7583,
+              65186.5906, 65067.1522, 64972.0282, 64898.8041, 64845.0649]
 }
-
 df = pd.DataFrame(data)
 
 view_state = pdk.ViewState(latitude=-40.9006, longitude=174.8860, zoom=5)
