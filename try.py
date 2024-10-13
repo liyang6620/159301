@@ -3,7 +3,7 @@ import pandas as pd
 import pydeck as pdk
 import xgboost as xgb
 import numpy as np
-import datetime as dt
+from datetime import datetime as dt
 from scipy.interpolate import CubicSpline
 
 predictions = pd.read_csv('predictions.csv')
