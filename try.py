@@ -57,7 +57,7 @@ selected_year = st.selectbox("Year", years_range)
 selected_month = st.selectbox("Month", months_range)
 location = st.selectbox("Location", location_df['Location'])
 crime = st.number_input("Crime", value=0.0, step=0.1)
-location_id = df[df['Location'] == location]['Location Id'].values[0]
+location_id = location_df[location_df['Location'] == location]['Location Id'].values[0]
 
 st.write(location_id)
 
