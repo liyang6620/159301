@@ -59,7 +59,8 @@ location = st.selectbox("Location", location_df['Location'])
 crime = st.number_input("Crime", value=0.0, step=0.1)
 location_id = location_df[location_df['Location'] == location]['Location Id'].values[0]
 
-
+selected_date = pd.to_datetime(f'{selected_year}-{selected_month}-01')
+selected_df = total_sentences_predictions_monthly[(total_sentences_predictions_monthly['Date'] <= selected_date) & (total_sentences_predictions_monthly['Location'] == selected_location)]
 
 st.write(location_id)
 
@@ -106,4 +107,4 @@ st.pydeck_chart(pdk.Deck(
 ))
 
 
-st.dataframe(total_sentences_predictions_monthly)
+st.dataframe(selected_df)
