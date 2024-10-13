@@ -60,21 +60,21 @@ crime = st.number_input("Crime", value=0.0, step=0.1)
 location_id = location_df[location_df['Location'] == location]['Location Id'].values[0]
 
 selected_date = pd.to_datetime(f'{selected_year}-{selected_month}-01')
-selected_df = total_sentences_predictions_monthly[(total_sentences_predictions_monthly['Date'] <= selected_date) & (total_sentences_predictions_monthly['Location'] == location)]
+if location == ALL:
+    selected_df = total_sentences_predictions_monthly[(total_sentences_predictions_monthly['Date'] <= selected_date)]
+else:
+    selected_df = total_sentences_predictions_monthly[(total_sentences_predictions_monthly['Date'] <= selected_date) & (total_sentences_predictions_monthly['Location'] == location)]
 
 st.write(location_id)
 
 data = {
     'Location': ['Northland', 'Auckland', 'Waikato', 'Bay of Plenty', 'Gisborne', 
                  'Hawke\'s Bay', 'Taranaki', 'Manawatu-Whanganui', 'Wellington', 
-                 'West Coast', 'Canterbury', 'Otago', 'Southland', 'Tasman', 'Nelson', 
-                 'Marlborough'],
+                 'West Coast', 'Canterbury', 'Otago', 'Southland'],
     'Latitude': [-35.717, -36.8485, -37.7870, -37.6878, -38.6623, -39.4917, -39.0599,
-                 -40.3564, -41.2865, -42.7157, -43.5321, -45.8788, -46.4132, -41.2924,
-                 -41.2706, -41.5180],
+                 -40.3564, -41.2865, -42.7157, -43.5321, -45.8788, -46.4132, -41.2924],
     'Longitude': [174.3237, 174.7633, 175.2830, 176.1651, 178.0228, 176.8506, 174.2405,
-                  175.6110, 174.7762, 170.4634, 172.6362, 170.5036, 168.3475, 173.1853,
-                  173.2836, 173.8630],
+                  175.6110, 174.7762, 170.4634, 172.6362, 170.5036, 168.3475, 173.1853],
     'Average Rent': np.random.randint(1000, 3000, size=16)  # 随机生成租金数据
 }
 
