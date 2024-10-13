@@ -30,4 +30,4 @@ watchdog==4.0.2
 xgboost==1.6.0
 setuptools
 numpy 
-CubicSpline
+scipy
