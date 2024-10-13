@@ -37,10 +37,10 @@ total_sentences_predictions_monthly.reset_index(drop=True, inplace=True)
 loaded_model = xgb.Booster()
 loaded_model.load_model('xgboost-model-0')
 
-st.title("简单的计算器")
+st.title("Crime and Rent")
 
 
-num1 = st.number_input("输入第一个数字", value=0.0, step=0.1)
+selected_date = st.date_input("Select date", datetime.today())
 num2 = st.number_input("输入第二个数字", value=0.0, step=0.1)
 num3 = st.number_input("输入第三个数字", value=0.0, step=0.1)
 
