@@ -61,12 +61,18 @@ location_id = location_df[location_df['Location'] == location]['Location Id'].va
 
 st.write(location_id)
 
-
 data = {
-    'City': ['Auckland', 'Wellington', 'Christchurch', 'Hamilton', 'Tauranga'],
-    'Latitude': [-36.8485, -41.2865, -43.5321, -37.7870, -37.6878],
-    'Longitude': [174.7633, 174.7762, 172.6362, 175.2830, 176.1651],
-    'Average Rent': [2300, 2100, 1900, 1800, 2000]
+    'Location': ['Northland', 'Auckland', 'Waikato', 'Bay of Plenty', 'Gisborne', 
+                 'Hawke\'s Bay', 'Taranaki', 'Manawatu-Whanganui', 'Wellington', 
+                 'West Coast', 'Canterbury', 'Otago', 'Southland', 'Tasman', 'Nelson', 
+                 'Marlborough'],
+    'Latitude': [-35.717, -36.8485, -37.7870, -37.6878, -38.6623, -39.4917, -39.0599,
+                 -40.3564, -41.2865, -42.7157, -43.5321, -45.8788, -46.4132, -41.2924,
+                 -41.2706, -41.5180],
+    'Longitude': [174.3237, 174.7633, 175.2830, 176.1651, 178.0228, 176.8506, 174.2405,
+                  175.6110, 174.7762, 170.4634, 172.6362, 170.5036, 168.3475, 173.1853,
+                  173.2836, 173.8630],
+    'Average Rent': np.random.randint(1000, 3000, size=16)  # 随机生成租金数据
 }
 
 df = pd.DataFrame(data)
