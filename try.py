@@ -55,11 +55,11 @@ years_range = list(range(2025, 2034))
 months_range = list(range(1, 13))
 selected_year = st.selectbox("Year", years_range)
 selected_month = st.selectbox("Month", months_range)
+location = st.selectbox("Location", location_df['Location'])
+crime = st.number_input("Crime", value=0.0, step=0.1)
+location_id = df[df['Location'] == location]['Location Id'].values[0]
 
-num2 = st.number_input("输入第二个数字", value=0.0, step=0.1)
-num3 = st.number_input("输入第三个数字", value=0.0, step=0.1)
-
-st.write(selected_year)
+st.write(location_id)
 
 
 data = {
