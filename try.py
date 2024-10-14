@@ -57,16 +57,14 @@ months_range = list(range(1, 13))
 selected_year = st.selectbox("Year", years_range)
 selected_month = st.selectbox("Month", months_range)
 location = st.selectbox("Location", location_df['Location'])
-crime = st.number_input("Crime", value=0.0, step=0.1)
 location_id = location_df[location_df['Location'] == location]['Location Id'].values[0]
 
 selected_date = pd.to_datetime(f'{selected_year}-{selected_month}-01')
+
 if location == "All":
-    selected_df = total_sentences_predictions_monthly[(total_sentences_predictions_monthly['Date'] <= selected_date)]
-    selected_df['Crime_Rolling_Std_3'] = selected_df.groupby('Location')['Crime'].apply(lambda x: x.rolling(window=3, min_periods=1).std()).reset_index(level=0, drop=True)  # 重置索引，使其与原数据对齐
-    
-    selected_df['Crime_Rolling_Std_6'] = selected_df.groupby('Location')['Crime'].apply(lambda x: x.rolling(window=6, min_periods=1).std()).reset_index(level=0, drop=True)
+    crime = st.number_input("Crime", value=0.0, step=0.1, disabled=True)
 else:
+    crime = st.number_input("Crime", value=0.0, step=0.1)
     selected_df = total_sentences_predictions_monthly[(total_sentences_predictions_monthly['Date'] <= selected_date) & (total_sentences_predictions_monthly['Location'] == location)]
     selected_df['Crime_Rolling_Std_3'] = selected_df['Crime'].rolling(3,1).std()
     selected_df['Crime_Rolling_Std_6'] = selected_df['Crime'].rolling(6,1).std()
