@@ -81,10 +81,6 @@ if selected_location == "ALL":
     crime = st.number_input("Crime", value=0.0, step=0.1, disabled=True)
 else:
     crime = st.number_input("Crime", value=0.0, step=0.1)
-    selected_df = total_sentences_predictions_monthly[(total_sentences_predictions_monthly['Date'] <= selected_date) & (total_sentences_predictions_monthly['Location'] == selected_location)]
-    selected_df.loc[selected_df.index[-1], 'Crime'] = crime
-    selected_df['Crime_Rolling_Std_3'] = selected_df['Crime'].rolling(3,1).std()
-    selected_df['Crime_Rolling_Std_6'] = selected_df['Crime'].rolling(6,1).std()
 
 if st.button("Predict"):
     if selected_location == "ALL":
@@ -101,7 +97,7 @@ if st.button("Predict"):
             forecast = model_fit.get_forecast(steps=delta_months)
             predicted_rent = forecast.predicted_mean
             predictions_per_location[location] = predicted_rent.iloc[-1]
-        st.write(predictions_per_location)
+        st.write(delta_months)
         predictions_df = pd.DataFrame(list(predictions_per_location.items()), columns=['Location', 'Predicted Rent'])
         predictions_df = predictions_df[predictions_df['Location'] != 'ALL']
         merged_df = pd.merge(predictions_df, location_df, on='Location', how='left')
@@ -129,6 +125,10 @@ if st.button("Predict"):
             tooltip=tooltip
         ))
     else:
+        selected_df = total_sentences_predictions_monthly[(total_sentences_predictions_monthly['Date'] <= selected_date) & (total_sentences_predictions_monthly['Location'] == selected_location)]
+        selected_df.loc[selected_df.index[-1], 'Crime'] = crime
+        selected_df['Crime_Rolling_Std_3'] = selected_df['Crime'].rolling(3,1).std()
+        selected_df['Crime_Rolling_Std_6'] = selected_df['Crime'].rolling(6,1).std()
         features = selected_df.iloc[-1][['Crime_Rolling_Std_3', 'Crime_Rolling_Std_6']]
         features['Location Id'] = location_id
         dtest = xgb.DMatrix([features])
