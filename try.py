@@ -87,20 +87,31 @@ if st.button("Predict"):
         last_date = rent_monthly['Time Frame'].max()
         selected_date = pd.to_datetime(f'{selected_year}-{selected_month}-01')
         delta_months = (selected_date.year - last_date.year) * 12 + (selected_date.month - last_date.month)
+        
         predictions_per_location = {}
         for location in location_df['Location']:
             location_data = rent_monthly[rent_monthly['Location'] == location].set_index('Time Frame')
             location_data = location_data.sort_index()
-            y = location_data['Median Rent']
-            model = ARIMA(y, order=(1,1,1))
+            loc_df = pd.DataFrame(location_data)
+            N = 3  
+            for i in range(1, N + 1):
+                loc_df[f'lag_{i}'] = location_data['Median Rent'].shift(i)
+
+            loc_df.dropna(inplace=True)
+            y = loc_df['Median Rent']
+            
+            model = ARIMA(y, order=(1, 1, 1))
             model_fit = model.fit()
+            
             forecast = model_fit.get_forecast(steps=delta_months)
             predicted_rent = forecast.predicted_mean
-            predictions_per_location[location] = predicted_rent.iloc[-1]
+            predictions_per_location[location] = predicted_rent.iloc[-1]  
+
         st.write(predictions_per_location)
         predictions_df = pd.DataFrame(list(predictions_per_location.items()), columns=['Location', 'Predicted Rent'])
         predictions_df = predictions_df[predictions_df['Location'] != 'ALL']
         merged_df = pd.merge(predictions_df, location_df, on='Location', how='left')
+        
         
         view_state = pdk.ViewState(latitude=-40.9006, longitude=174.8860, zoom=5)
         layer = pdk.Layer(
