@@ -146,8 +146,8 @@ if st.button("Predict"):
         features['Location Id'] = location_id
         dtest = xgb.DMatrix([features])
         predictions = loaded_model.predict(dtest)
-        location_latitude = location_data['Latitude'][location_data['Location'] == selected_location]
-        location_longitude = location_data['Longitude'][location_data['Location'] == selected_location]
+        location_latitude = location_df.loc[location_df['Location'] == selected_location, 'Latitude'].values[0]
+        location_longitude = location_df.loc[location_df['Location'] == selected_location, 'Longitude'].values[0]
         st.write(location_latitude)
         st.write(location_longitude)
         view_state = pdk.ViewState(latitude=location_latitude, longitude=location_longitude, zoom=5)
