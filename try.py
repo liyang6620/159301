@@ -146,6 +146,30 @@ if st.button("Predict"):
         features['Location Id'] = location_id
         dtest = xgb.DMatrix([features])
         predictions = loaded_model.predict(dtest)
+        location_latitude = location_data['Latitude'][location_data['Location'] == selected_location]
+        location_longitude = location_data['Longitude'][location_data['Location'] == selected_location]
+        view_state = pdk.ViewState(latitude=location_latitude, longitude=location_longitude, zoom=5)
+        layer = pdk.Layer(
+            'ScatterplotLayer',
+            data=merged_df,
+            get_position='[Longitude, Latitude]',
+            get_color='[200, 30, 0, 160]',
+            get_radius=10000,  
+            pickable=True
+        )
+        tooltip={
+        "html": "<b>City:</b> {selected_location}<br><b>Average Rent:</b> ${predictions}",
+        "style": {
+            "backgroundColor": "steelblue",
+            "color": "white"
+            }
+        }
+        
+        st.pydeck_chart(pdk.Deck(
+            initial_view_state=view_state,
+            layers=[layer],
+            tooltip=tooltip
+        ))
     
 
 
