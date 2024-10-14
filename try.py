@@ -8,7 +8,7 @@ from scipy.interpolate import CubicSpline
 
 predictions = pd.read_csv('predictions.csv')
 crime_monthly = pd.read_csv('crime_monthly.csv')
-
+crime_monthly['Date'] = pd.to_datetime(crime_monthly['Date'])
 total_sentences_predictions = predictions[predictions['Target'] == 'Total Sentences'].sort_values(['Year','Region'])
 total_sentences_predictions = total_sentences_predictions.loc[total_sentences_predictions.groupby(['Year', 'Region'])['MSE'].idxmin()]
 
