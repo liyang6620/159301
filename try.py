@@ -101,10 +101,11 @@ if st.button("Predict"):
             forecast = model_fit.get_forecast(steps=delta_months)
             predicted_rent = forecast.predicted_mean
             predictions_per_location[location] = predicted_rent.iloc[-1]
+        st.write(predictions_per_location)
         predictions_df = pd.DataFrame(list(predictions_per_location.items()), columns=['Location', 'Predicted Rent'])
         predictions_df = predictions_df[predictions_df['Location'] != 'ALL']
         merged_df = pd.merge(predictions_df, location_df, on='Location', how='left')
-        st.write(selected_date)
+        
         view_state = pdk.ViewState(latitude=-40.9006, longitude=174.8860, zoom=5)
         layer = pdk.Layer(
             'ScatterplotLayer',
