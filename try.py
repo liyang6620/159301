@@ -73,7 +73,7 @@ else:
     selected_df.iloc[-1, selected_df.columns.get_loc('Crime')] = crime
     selected_df['Crime_Rolling_Std_3'] = selected_df['Crime'].rolling(3,1).std()
     selected_df['Crime_Rolling_Std_6'] = selected_df['Crime'].rolling(6,1).std()
-    features = selected_df[['Crime_Rolling_Std_3', 'Crime_Rolling_Std_6']]
+    features = selected_df.iloc[-1][['Crime_Rolling_Std_3', 'Crime_Rolling_Std_6']]
     features['Location Id'] = location_id
     dtest = xgb.DMatrix(features)
     predictions = loaded_model.predict(dtest)
