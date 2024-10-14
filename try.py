@@ -72,7 +72,7 @@ location_id = location_df[location_df['Location'] == selected_location]['Locatio
 
 selected_date = pd.to_datetime(f'{selected_year}-{selected_month}-01')
 
-if location == "ALL":
+if selected_location == "ALL":
     crime = st.number_input("Crime", value=0.0, step=0.1, disabled=True)
 else:
     crime = st.number_input("Crime", value=0.0, step=0.1)
@@ -102,6 +102,7 @@ if st.button("Predict"):
         features['Location Id'] = location_id
         dtest = xgb.DMatrix([features])
         predictions = loaded_model.predict(dtest)
+
 
 data = {
     'Date': pd.date_range(start='2025-01-01', periods=10, freq='MS'),
