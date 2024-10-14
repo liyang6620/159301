@@ -94,7 +94,7 @@ if st.button("Predict"):
             model_fit = model.fit()
             forecast = model_fit.get_forecast(steps=delta_months)
             predicted_rent = forecast.predicted_mean
-            predictions_per_location[location] = predicted_rent[-1]
+            predictions_per_location[location] = predicted_rent.iloc[-1]
         st.write(predictions_per_location)
     else:
         features = selected_df.iloc[-1][['Crime_Rolling_Std_3', 'Crime_Rolling_Std_6']]
