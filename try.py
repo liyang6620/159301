@@ -102,47 +102,43 @@ if st.button("Predict"):
             predictions_per_location[location] = predicted_rent.iloc[-1]
         predictions_df = pd.DataFrame(list(predictions_per_location.items()), columns=['Location', 'Predicted Rent'])
         predictions_df = predictions_df[predictions_df['Location'] != 'ALL']
-        merged_df = pd.merge(predictions_df, location_df, on='Location', how='left')
         st.write(merged_df)
     else:
         features = selected_df.iloc[-1][['Crime_Rolling_Std_3', 'Crime_Rolling_Std_6']]
         features['Location Id'] = location_id
         dtest = xgb.DMatrix([features])
         predictions = loaded_model.predict(dtest)
-
-
-data = {
-    'Date': pd.date_range(start='2025-01-01', periods=10, freq='MS'),
-    'Location': ['ALL'] * 10,  
-    'Crime': [66233.0164, 65955.7842, 65714.9403, 65508.0699, 65332.7583,
-              65186.5906, 65067.1522, 64972.0282, 64898.8041, 64845.0649]
-}
-df = pd.DataFrame(data)
-
-view_state = pdk.ViewState(latitude=-40.9006, longitude=174.8860, zoom=5)
-
-
-layer = pdk.Layer(
-    'ScatterplotLayer',
-    data=df,
-    get_position='[Longitude, Latitude]',
-    get_color='[200, 30, 0, 160]',
-    get_radius=10000,  # 半径大小，根据需要调整
-    pickable=True
-)
-
-tooltip={
+    merged_df = pd.merge(predictions_df, location_df, on='Location', how='left')
+    view_state = pdk.ViewState(latitude=-40.9006, longitude=174.8860, zoom=5)
+    layer = pdk.Layer(
+        'ScatterplotLayer',
+        data=merged_df,
+        get_position='[Longitude, Latitude]',
+        get_color='[200, 30, 0, 160]',
+        get_radius=10000,  # 半径大小，根据需要调整
+        pickable=True
+    )
+    tooltip={
     "html": "<b>City:</b> {City}<br><b>Average Rent:</b> ${Average Rent}",
     "style": {
         "backgroundColor": "steelblue",
         "color": "white"
+        }
     }
-}
+    
+    st.pydeck_chart(pdk.Deck(
+        initial_view_state=view_state,
+        layers=[layer],
+        tooltip=tooltip
+    ))
 
-st.pydeck_chart(pdk.Deck(
-    initial_view_state=view_state,
-    layers=[layer],
-    tooltip=tooltip
-))
+
+
+
+
+
+
+
+
 
 
