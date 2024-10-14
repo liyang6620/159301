@@ -39,6 +39,7 @@ for location in total_sentences_predictions['Region'].unique():
     })
 
     total_sentences_predictions_monthly = pd.concat([total_sentences_predictions_monthly, interpolated_data])
+    
 total_sentences_predictions_monthly.reset_index(drop=True, inplace=True)
 total_sentences_predictions_monthly['Location'] = total_sentences_predictions_monthly['Location'].apply(lambda x: x if x == 'ALL' else x.replace(" Region", ""))
 total_sentences_predictions_monthly = pd.concat([crime_monthly, total_sentences_predictions_monthly])
@@ -76,7 +77,7 @@ if location == "ALL":
 else:
     crime = st.number_input("Crime", value=0.0, step=0.1)
     selected_df = total_sentences_predictions_monthly[(total_sentences_predictions_monthly['Date'] <= selected_date) & (total_sentences_predictions_monthly['Location'] == location)]
-    selected_df.iloc[-1]['Crime'] = crime
+    selected_df.loc[selected_df.index[-1], 'Crime'] = crime
     selected_df['Crime_Rolling_Std_3'] = selected_df['Crime'].rolling(3,1).std()
     selected_df['Crime_Rolling_Std_6'] = selected_df['Crime'].rolling(6,1).std()
 
