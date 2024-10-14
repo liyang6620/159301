@@ -102,7 +102,6 @@ if st.button("Predict"):
             predictions_per_location[location] = predicted_rent.iloc[-1]
         predictions_df = pd.DataFrame(list(predictions_per_location.items()), columns=['Location', 'Predicted Rent'])
         predictions_df = predictions_df[predictions_df['Location'] != 'ALL']
-        st.write(merged_df)
     else:
         features = selected_df.iloc[-1][['Crime_Rolling_Std_3', 'Crime_Rolling_Std_6']]
         features['Location Id'] = location_id
