@@ -7,6 +7,8 @@ from datetime import datetime as dt
 from scipy.interpolate import CubicSpline
 
 predictions = pd.read_csv('predictions.csv')
+crime_monthly = pd.read_csv('crime_monthly.csv')
+
 total_sentences_predictions = predictions[predictions['Target'] == 'Total Sentences'].sort_values(['Year','Region'])
 total_sentences_predictions = total_sentences_predictions.loc[total_sentences_predictions.groupby(['Year', 'Region'])['MSE'].idxmin()]
 
@@ -66,13 +68,13 @@ if location == "All":
 else:
     crime = st.number_input("Crime", value=0.0, step=0.1)
     selected_df = total_sentences_predictions_monthly[(total_sentences_predictions_monthly['Date'] <= selected_date) & (total_sentences_predictions_monthly['Location'] == location)]
-    selected_df['Crime_Rolling_Std_3'] = selected_df['Crime'].rolling(window=3, min_periods=1).std()
-    selected_df['Crime_Rolling_Std_6'] = selected_df['Crime'].rolling(window=6, min_periods=1).std()
+    selected_df['Crime_Rolling_Std_3'] = selected_df['Crime'].rolling(3,1).std()
+    selected_df['Crime_Rolling_Std_6'] = selected_df['Crime'].rolling(6,1).std()
 st.write(location_id)
 
 data = {
     'Date': pd.date_range(start='2025-01-01', periods=10, freq='MS'),
-    'Location': ['ALL'] * 10,  # 可以根据实际数据更改 Location
+    'Location': ['ALL'] * 10,  
     'Crime': [66233.0164, 65955.7842, 65714.9403, 65508.0699, 65332.7583,
               65186.5906, 65067.1522, 64972.0282, 64898.8041, 64845.0649]
 }
@@ -105,4 +107,4 @@ st.pydeck_chart(pdk.Deck(
 ))
 
 
-st.dataframe(selected_df)
+st.dataframe(crime_monthly)
