@@ -34,9 +34,9 @@ for location in total_sentences_predictions['Region'].unique():
     })
 
     total_sentences_predictions_monthly = pd.concat([total_sentences_predictions_monthly, interpolated_data])
-total_sentences_predictions_monthly = pd.concat([crime_monthly, total_sentences_predictions_monthly])
 total_sentences_predictions_monthly.reset_index(drop=True, inplace=True)
 total_sentences_predictions_monthly['Location'] = total_sentences_predictions_monthly['Location'].apply(lambda x: x if x == 'ALL' else x.replace(" Region", ""))
+total_sentences_predictions_monthly = pd.concat([crime_monthly, total_sentences_predictions_monthly])
 
 
 loaded_model = xgb.Booster()
@@ -44,7 +44,7 @@ loaded_model.load_model('xgboost-model-0')
 
 location_data = {
     'Location Id': [0, 1, 2, 3, 4, 5 , 7, 8, 9, 13, 14, 15],
-    'Location': ['All','Northland', 'Auckland', 'Waikato', 'Bay of Plenty', 'Gisborne', 
+    'Location': ['ALL','Northland', 'Auckland', 'Waikato', 'Bay of Plenty', 'Gisborne', 
                   'Taranaki', 'Manawatu-Wanganui', 'Wellington', 
                   'Canterbury', 'Otago', 'Southland']
 }
@@ -63,7 +63,7 @@ location_id = location_df[location_df['Location'] == location]['Location Id'].va
 
 selected_date = pd.to_datetime(f'{selected_year}-{selected_month}-01')
 
-if location == "All":
+if location == "ALL":
     crime = st.number_input("Crime", value=0.0, step=0.1, disabled=True)
 else:
     crime = st.number_input("Crime", value=0.0, step=0.1)
@@ -107,4 +107,4 @@ st.pydeck_chart(pdk.Deck(
 ))
 
 
-st.dataframe(total_sentences_predictions_monthly)
+st.dataframe(selected_df)
