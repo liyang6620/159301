@@ -148,6 +148,8 @@ if st.button("Predict"):
         predictions = loaded_model.predict(dtest)
         location_latitude = location_data['Latitude'][location_data['Location'] == selected_location]
         location_longitude = location_data['Longitude'][location_data['Location'] == selected_location]
+        st.write(location_latitude)
+        st.write(location_longitude)
         view_state = pdk.ViewState(latitude=location_latitude, longitude=location_longitude, zoom=5)
         layer = pdk.Layer(
             'ScatterplotLayer',
