@@ -94,7 +94,7 @@ if st.button("Predict"):
             y = location_data['Median Rent']
             model = ARIMA(y, order=(1,1,1))
             model_fit = model.fit()
-            forecast = model_fit.get_forecast(steps=1000)
+            forecast = model_fit.get_forecast(steps=delta_months)
             predicted_rent = forecast.predicted_mean
             predictions_per_location[location] = predicted_rent.iloc[-1]
         st.write(predictions_per_location)
