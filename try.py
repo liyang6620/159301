@@ -125,7 +125,7 @@ if st.button("Predict"):
             pickable=True
         )
         tooltip={
-        "html": f"<b>City:</b> {Location}<br><b>Average Rent:</b> ${Predicted Rent}",
+        "html": "<b>City:</b> {Location}<br><b>Average Rent:</b> ${Predicted Rent}",
         "style": {
             "backgroundColor": "steelblue",
             "color": "white"
