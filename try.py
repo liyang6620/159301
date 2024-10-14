@@ -77,27 +77,11 @@ if location == "ALL":
 else:
     crime = st.number_input("Crime", value=0.0, step=0.1)
     selected_df = total_sentences_predictions_monthly[(total_sentences_predictions_monthly['Date'] <= selected_date) & (total_sentences_predictions_monthly['Location'] == location)]
-    st.write(selected_date)
-    st.dataframe(total_sentences_predictions_monthly)
     selected_df.loc[selected_df.index[-1], 'Crime'] = crime
     selected_df['Crime_Rolling_Std_3'] = selected_df['Crime'].rolling(3,1).std()
     selected_df['Crime_Rolling_Std_6'] = selected_df['Crime'].rolling(6,1).std()
 
 if st.button("Predict"):
-    if location == "ALL":
-        last_date = df['Time Frame'].max()
-        delta_months = (selected_date.year - last_date.year) * 12 + (selected_date.month - last_date.month)
-        predictions_per_location = {}
-        for location in location_df['Location']:
-            location_data = df[df['Location'] == location].set_index('Time Frame')
-            location_data = location_data.sort_index()  
-            y = location_data['Median Rent']
-            model = ARIMA(y, order=(1, 1, 1))
-            model_fit = model.fit()
-            forecast = model_fit.get_forecast(steps=delta_months)
-            predicted_rent = forecast.predicted_mean
-            predictions_per_location[location] = predicted_rent[-1]
-    else:
         features = selected_df.iloc[-1][['Crime_Rolling_Std_3', 'Crime_Rolling_Std_6']]
         features['Location Id'] = location_id
         dtest = xgb.DMatrix([features])
