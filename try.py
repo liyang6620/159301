@@ -137,7 +137,8 @@ if st.button("Predict"):
         ))
     else:
         selected_df = total_sentences_predictions_monthly[(total_sentences_predictions_monthly['Date'] <= selected_date) & (total_sentences_predictions_monthly['Location'] == selected_location)]
-        selected_df.loc[selected_df.index[-1], 'Crime'] = crime
+        if crime >0 :
+            selected_df.loc[selected_df.index[-1], 'Crime'] = crime
         selected_df['Crime_Rolling_Std_3'] = selected_df['Crime'].rolling(3,1).std()
         selected_df['Crime_Rolling_Std_6'] = selected_df['Crime'].rolling(6,1).std()
         features = selected_df.iloc[-1][['Crime_Rolling_Std_3', 'Crime_Rolling_Std_6']]
