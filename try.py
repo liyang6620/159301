@@ -104,7 +104,7 @@ if st.button("Predict"):
         predictions_df = pd.DataFrame(list(predictions_per_location.items()), columns=['Location', 'Predicted Rent'])
         predictions_df = predictions_df[predictions_df['Location'] != 'ALL']
         merged_df = pd.merge(predictions_df, location_df, on='Location', how='left')
-        st.write(merged_df)
+        st.write(selected_date)
         view_state = pdk.ViewState(latitude=-40.9006, longitude=174.8860, zoom=5)
         layer = pdk.Layer(
             'ScatterplotLayer',
