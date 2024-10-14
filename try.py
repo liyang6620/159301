@@ -82,7 +82,7 @@ else:
     selected_df['Crime_Rolling_Std_6'] = selected_df['Crime'].rolling(6,1).std()
 
 if st.button("Predict"):
-    if location == "ALL":
+    if selected_location == "ALL":
         selected_date = datetime(selected_year, selected_month, 1)
         last_date = df['Time Frame'].max()
         delta_months = (selected_date.year - last_date.year) * 12 + (selected_date.month - last_date.month)
