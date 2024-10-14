@@ -56,9 +56,6 @@ location_data = {
 }
 
 location_df = pd.DataFrame(location_data)
-rent_crime_monthly = rent_crime_monthly[rent_crime_monthly['Location'].isin(location_df['Location'])]
-ren_monthly = rent_crime_monthly[['Time Frame','Median Rent']]
-ren_monthly['Time Frame'] = pd.to_datetime(ren_monthly['Time Frame'])
 
 st.title("Crime and Rent")
 
