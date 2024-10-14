@@ -145,7 +145,8 @@ if st.button("Predict"):
         features = selected_df.iloc[-1][['Crime_Rolling_Std_3', 'Crime_Rolling_Std_6']]
         features['Location Id'] = location_id
         dtest = xgb.DMatrix([features])
-        predictions = loaded_model.predict(dtest).values[0]
+        predictions = loaded_model.predict(dtest)
+        predicted_rent = predictions[0]
         location_latitude = location_df.loc[location_df['Location'] == selected_location, 'Latitude'].values[0]
         location_longitude = location_df.loc[location_df['Location'] == selected_location, 'Longitude'].values[0]
         view_state = pdk.ViewState(latitude=location_latitude, longitude=location_longitude, zoom=10)
@@ -158,7 +159,7 @@ if st.button("Predict"):
             pickable=True
         )
         tooltip={
-        "html": f"<b>City:</b> {selected_location}<br><b>Average Rent:</b> ${predictions}",
+        "html": f"<b>City:</b> {selected_location}<br><b>Average Rent:</b> ${predicted_rent}",
         "style": {
             "backgroundColor": "steelblue",
             "color": "white"
