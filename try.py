@@ -56,6 +56,9 @@ location_data = {
 }
 
 location_df = pd.DataFrame(location_data)
+rent_crime_monthly = rent_crime_monthly[rent_crime_monthly['Location'].isin(location_df['Location'])]
+ren_monthly = rent_crime_monthly[['Time Frame','Median Rent']]
+ren_monthly['Time Frame'] = pd.to_datetime(ren_monthly['Time Frame'])
 
 st.title("Crime and Rent")
 
@@ -79,6 +82,20 @@ else:
     selected_df['Crime_Rolling_Std_6'] = selected_df['Crime'].rolling(6,1).std()
 
 if st.button("Predict"):
+    if location == "ALL":
+        last_date = df['Time Frame'].max()
+        delta_months = (selected_date.year - last_date.year) * 12 + (selected_date.month - last_date.month)
+        predictions_per_location = {}
+        for location in location_df['Location']:
+            location_data = ren_monthly[ren_monthly['Location'] == location].set_index('Time Frame')
+            location_data = location_data.sort_index()
+            y = location_data['Median Rent']
+            model = ARIMA(y, order=(1, 1, 1))
+            model_fit = model.fit()
+            forecast = model_fit.get_forecast(steps=delta_months)
+            predicted_rent = forecast.predicted_mean
+            predictions_per_location[location] = predicted_rent[-1]
+    else:
         features = selected_df.iloc[-1][['Crime_Rolling_Std_3', 'Crime_Rolling_Std_6']]
         features['Location Id'] = location_id
         dtest = xgb.DMatrix([features])
