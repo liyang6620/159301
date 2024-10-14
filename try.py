@@ -34,7 +34,7 @@ for location in total_sentences_predictions['Region'].unique():
     })
 
     total_sentences_predictions_monthly = pd.concat([total_sentences_predictions_monthly, interpolated_data])
-
+total_sentences_predictions_monthl = pd.concat([crime_monthly, total_sentences_predictions_monthly])
 total_sentences_predictions_monthly.reset_index(drop=True, inplace=True)
 total_sentences_predictions_monthly['Location'] = total_sentences_predictions_monthly['Location'].apply(lambda x: x if x == 'ALL' else x.replace(" Region", ""))
 
@@ -107,4 +107,4 @@ st.pydeck_chart(pdk.Deck(
 ))
 
 
-st.dataframe(crime_monthly)
+st.dataframe(total_sentences_predictions_monthl)
