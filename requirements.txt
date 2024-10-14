@@ -32,3 +32,4 @@ setuptools
 numpy 
 scipy
 datetime
+statsmodels
