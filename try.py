@@ -101,7 +101,7 @@ if st.button("Predict"):
             loc_df.dropna(inplace=True)
             y = loc_df['Median Rent']
             
-            model =  SARIMAX(y, order=(1, 1, 1), seasonal_order=(1, 1, 1, 12))
+            model = ARIMA(y, order=(1, 1, 1))
             model_fit = model.fit()
             
             forecast = model_fit.get_forecast(steps=delta_months)
