@@ -84,6 +84,7 @@ else:
     crime = st.number_input("Crime", value=0.0, step=0.1)
 
 if st.button("Predict"):
+    x= pd.DataFrame()
     if selected_location == "ALL":
         last_date = rent_monthly['Time Frame'].max()
         selected_date = pd.to_datetime(f'{selected_year}-{selected_month}-01')
@@ -106,9 +107,9 @@ if st.button("Predict"):
             
             forecast = model_fit.get_forecast(steps=delta_months)
             predicted_rent = forecast.predicted_mean
+            x = pd.concat([ x, predicted_rent])
             predictions_per_location[location] = predicted_rent.iloc[-1]  
-
-        st.write(predictions_per_location)
+        st.write(x)
         predictions_df = pd.DataFrame(list(predictions_per_location.items()), columns=['Location', 'Predicted Rent'])
         predictions_df = predictions_df[predictions_df['Location'] != 'ALL']
         merged_df = pd.merge(predictions_df, location_df, on='Location', how='left')
