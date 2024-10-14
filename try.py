@@ -58,6 +58,7 @@ location_df = pd.DataFrame(location_data)
 rent_crime_monthly = rent_crime_monthly[rent_crime_monthly['Location'].isin(location_df['Location'])]
 ren_monthly = rent_crime_monthly[['Time Frame','Median Rent']]
 ren_monthly['Time Frame'] = pd.to_datetime(ren_monthly['Time Frame'])
+
 st.title("Crime and Rent")
 
 
@@ -69,6 +70,8 @@ selected_location = st.selectbox("Location", location_df['Location'])
 location_id = location_df[location_df['Location'] == selected_location]['Location Id'].values[0]
 
 selected_date = pd.to_datetime(f'{selected_year}-{selected_month}-01')
+
+st.dataframe(total_sentences_predictions_monthly)
 
 if location == "ALL":
     crime = st.number_input("Crime", value=0.0, step=0.1, disabled=True)
