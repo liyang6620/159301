@@ -6,7 +6,7 @@ import numpy as np
 from datetime import datetime as dt
 from scipy.interpolate import CubicSpline
 from statsmodels.tsa.arima.model import ARIMA
-from statsmodels.tsa.statespace.sarimax import SARIMAX
+
 
 predictions = pd.read_csv('predictions.csv')
 crime_monthly = pd.read_csv('crime_monthly.csv')
@@ -95,21 +95,19 @@ if st.button("Predict"):
             location_data = rent_monthly[rent_monthly['Location'] == location].set_index('Time Frame')
             location_data = location_data.sort_index()
             loc_df = pd.DataFrame(location_data)
-            N = 3  
+            N = 13  
             for i in range(1, N + 1):
                 loc_df[f'lag_{i}'] = location_data['Median Rent'].shift(i)
 
             loc_df.dropna(inplace=True)
             y = loc_df['Median Rent']
             
-            model = ARIMA(y, order=(1, 1, 1))
+            model = ARIMA(y, order=(1, 2, 1))
             model_fit = model.fit()
             
             forecast = model_fit.get_forecast(steps=delta_months)
             predicted_rent = forecast.predicted_mean
-            x = pd.concat([ x, predicted_rent])
             predictions_per_location[location] = predicted_rent.iloc[-1]  
-        st.write(x)
         predictions_df = pd.DataFrame(list(predictions_per_location.items()), columns=['Location', 'Predicted Rent'])
         predictions_df = predictions_df[predictions_df['Location'] != 'ALL']
         merged_df = pd.merge(predictions_df, location_df, on='Location', how='left')
