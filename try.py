@@ -57,8 +57,8 @@ location_data = {
 
 location_df = pd.DataFrame(location_data)
 rent_crime_monthly = rent_crime_monthly[rent_crime_monthly['Location'].isin(location_df['Location'])]
-ren_monthly = rent_crime_monthly[['Time Frame','Median Rent']]
-ren_monthly['Time Frame'] = pd.to_datetime(ren_monthly['Time Frame'])
+rent_monthly = rent_crime_monthly[['Time Frame','Median Rent']]
+rent_monthly['Time Frame'] = pd.to_datetime(rent_monthly['Time Frame'])
 
 st.title("Crime and Rent")
 
@@ -83,11 +83,12 @@ else:
 
 if st.button("Predict"):
     if location == "ALL":
+        selected_date = datetime(selected_year, selected_month, 1)
         last_date = df['Time Frame'].max()
         delta_months = (selected_date.year - last_date.year) * 12 + (selected_date.month - last_date.month)
         predictions_per_location = {}
         for location in location_df['Location']:
-            location_data = ren_monthly[ren_monthly['Location'] == location].set_index('Time Frame')
+            location_data = rent_monthly[rent_monthly['Location'] == location].set_index('Time Frame')
             location_data = location_data.sort_index()
             y = location_data['Median Rent']
             model = ARIMA(y, order=(1, 1, 1))
@@ -102,6 +103,38 @@ if st.button("Predict"):
         dtest = xgb.DMatrix([features])
         predictions = loaded_model.predict(dtest)
 
+data = {
+    'Date': pd.date_range(start='2025-01-01', periods=10, freq='MS'),
+    'Location': ['ALL'] * 10,  
+    'Crime': [66233.0164, 65955.7842, 65714.9403, 65508.0699, 65332.7583,
+              65186.5906, 65067.1522, 64972.0282, 64898.8041, 64845.0649]
+}
+df = pd.DataFrame(data)
 
+view_state = pdk.ViewState(latitude=-40.9006, longitude=174.8860, zoom=5)
+
+
+layer = pdk.Layer(
+    'ScatterplotLayer',
+    data=df,
+    get_position='[Longitude, Latitude]',
+    get_color='[200, 30, 0, 160]',
+    get_radius=10000,  # 半径大小，根据需要调整
+    pickable=True
+)
+
+tooltip={
+    "html": "<b>City:</b> {City}<br><b>Average Rent:</b> ${Average Rent}",
+    "style": {
+        "backgroundColor": "steelblue",
+        "color": "white"
+    }
+}
+
+st.pydeck_chart(pdk.Deck(
+    initial_view_state=view_state,
+    layers=[layer],
+    tooltip=tooltip
+))
 
 
