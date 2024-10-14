@@ -72,7 +72,6 @@ selected_date = pd.to_datetime(f'{selected_year}-{selected_month}-01')
 
 if location == "ALL":
     crime = st.number_input("Crime", value=0.0, step=0.1, disabled=True)
-    predictions = 0
 else:
     crime = st.number_input("Crime", value=0.0, step=0.1)
     selected_df = total_sentences_predictions_monthly[(total_sentences_predictions_monthly['Date'] <= selected_date) & (total_sentences_predictions_monthly['Location'] == location)]
@@ -100,9 +99,6 @@ if st.button("Predict"):
         features['Location Id'] = location_id
         dtest = xgb.DMatrix([features])
         predictions = loaded_model.predict(dtest)
-        
-    
-st.write(predictions)
 
 data = {
     'Date': pd.date_range(start='2025-01-01', periods=10, freq='MS'),
