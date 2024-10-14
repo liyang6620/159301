@@ -95,7 +95,7 @@ if st.button("Predict"):
             forecast = model_fit.get_forecast(steps=delta_months)
             predicted_rent = forecast.predicted_mean
             predictions_per_location[location] = predicted_rent[-1]
-            st.dataframe(predictions_per_location)
+        st.dataframe(predictions_per_location)
     else:
         features = selected_df.iloc[-1][['Crime_Rolling_Std_3', 'Crime_Rolling_Std_6']]
         features['Location Id'] = location_id
