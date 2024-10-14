@@ -151,7 +151,7 @@ if st.button("Predict"):
         view_state = pdk.ViewState(latitude=location_latitude, longitude=location_longitude, zoom=5)
         layer = pdk.Layer(
             'ScatterplotLayer',
-            data=[{"Longitude": longitude, "Latitude": latitude}],
+            data=[{"Longitude": location_longitude, "Latitude": location_latitude}],
             get_position='[Longitude, Latitude]',
             get_color='[200, 30, 0, 160]',
             get_radius=10000,
