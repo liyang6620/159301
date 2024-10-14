@@ -51,9 +51,13 @@ loaded_model.load_model('xgboost-model-0')
 
 location_data = {
     'Location Id': [0, 1, 2, 3, 4, 5 , 7, 8, 9, 13, 14, 15],
-    'Location': ['ALL','Northland', 'Auckland', 'Waikato', 'Bay of Plenty', 'Gisborne', 
-                  'Taranaki', 'Manawatu-Wanganui', 'Wellington', 
-                  'Canterbury', 'Otago', 'Southland']
+    'Location': ['ALL', 'Northland', 'Auckland', 'Waikato', 'Bay of Plenty', 'Gisborne', 
+                 'Taranaki', 'Manawatu-Wanganui', 'Wellington', 
+                 'Canterbury', 'Otago', 'Southland'],
+    'Latitude': [0, -35.3708, -36.8485, -37.7833, -37.6878, -38.6623, 
+                 -39.3333, -40.3523, -41.2865, -43.6109, -45.0312, -46.4132],
+    'Longitude': [0, 174.5020, 174.7633, 175.2773, 176.1651, 178.0176, 
+                  174.0500, 175.6077, 174.7762, 172.6365, 170.3174, 168.3475]
 }
 
 location_df = pd.DataFrame(location_data)
@@ -98,7 +102,8 @@ if st.button("Predict"):
             predictions_per_location[location] = predicted_rent.iloc[-1]
         predictions_df = pd.DataFrame(list(predictions_per_location.items()), columns=['Location', 'Predicted Rent'])
         predictions_df = predictions_df[predictions_df['Location'] != 'ALL']
-        st.write(predictions_df)
+        merged_df = pd.merge(predictions_df, location_df, on='Location', how='left')
+        st.write(merged_df)
     else:
         features = selected_df.iloc[-1][['Crime_Rolling_Std_3', 'Crime_Rolling_Std_6']]
         features['Location Id'] = location_id
