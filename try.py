@@ -77,6 +77,7 @@ if location == "ALL":
 else:
     crime = st.number_input("Crime", value=0.0, step=0.1)
     selected_df = total_sentences_predictions_monthly[(total_sentences_predictions_monthly['Date'] <= selected_date) & (total_sentences_predictions_monthly['Location'] == location)]
+    st.write('selected_date')
     st.dataframe(total_sentences_predictions_monthly)
     selected_df.loc[selected_df.index[-1], 'Crime'] = crime
     selected_df['Crime_Rolling_Std_3'] = selected_df['Crime'].rolling(3,1).std()
