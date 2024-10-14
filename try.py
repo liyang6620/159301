@@ -10,6 +10,7 @@ from statsmodels.tsa.arima.model import ARIMA
 predictions = pd.read_csv('predictions.csv')
 crime_monthly = pd.read_csv('crime_monthly.csv')
 rent_crime_monthly = pd.read_csv('rent_crime_monthly.csv')
+rent_crime_monthly['Location'] = rent_crime_monthly['Location'].replace('Manawatu-Whanganui', 'Manawatu-Wanganui')
 
 
 crime_monthly['Date'] = pd.to_datetime(crime_monthly['Date'])
