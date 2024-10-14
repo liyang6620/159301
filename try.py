@@ -6,6 +6,7 @@ import numpy as np
 from datetime import datetime as dt
 from scipy.interpolate import CubicSpline
 from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.tsa.statespace.sarimax import SARIMAX
 
 predictions = pd.read_csv('predictions.csv')
 crime_monthly = pd.read_csv('crime_monthly.csv')
@@ -100,7 +101,7 @@ if st.button("Predict"):
             loc_df.dropna(inplace=True)
             y = loc_df['Median Rent']
             
-            model = ARIMA(y, order=(1, 1, 1))
+            model =  SARIMAX(y, order=(1, 1, 1), seasonal_order=(1, 1, 1, 12))
             model_fit = model.fit()
             
             forecast = model_fit.get_forecast(steps=delta_months)
