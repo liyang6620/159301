@@ -92,7 +92,7 @@ if st.button("Predict"):
             location_data = rent_monthly[rent_monthly['Location'] == location].set_index('Time Frame')
             location_data = location_data.sort_index()
             y = location_data['Median Rent']
-            model = ARIMA(y, order=(1, 1, 1))
+            model = ARIMA(y, order=(2, 1, 2))
             model_fit = model.fit()
             forecast = model_fit.get_forecast(steps=15)
             predicted_rent = forecast.predicted_mean
