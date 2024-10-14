@@ -86,7 +86,6 @@ else:
 if st.button("Predict"):
     if location == "ALL":
         last_date = df['Time Frame'].max()
-        selected_date = datetime(selected_year, selected_month, 1)
         delta_months = (selected_date.year - last_date.year) * 12 + (selected_date.month - last_date.month)
         predictions_per_location = {}
         for location in location_df['Location']:
