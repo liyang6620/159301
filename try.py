@@ -114,11 +114,11 @@ if st.button("Predict"):
         data=merged_df,
         get_position='[Longitude, Latitude]',
         get_color='[200, 30, 0, 160]',
-        get_radius=10000,  # 半径大小，根据需要调整
+        get_radius=10000,  
         pickable=True
     )
     tooltip={
-    "html": "<b>City:</b> {City}<br><b>Average Rent:</b> ${Average Rent}",
+    "html": "<b>City:</b> ${Location}<br><b>Average Rent:</b> ${Predicted Rent}",
     "style": {
         "backgroundColor": "steelblue",
         "color": "white"
