@@ -5,9 +5,13 @@ import xgboost as xgb
 import numpy as np
 from datetime import datetime as dt
 from scipy.interpolate import CubicSpline
+from statsmodels.tsa.arima.model import ARIMA
 
 predictions = pd.read_csv('predictions.csv')
 crime_monthly = pd.read_csv('crime_monthly.csv')
+rent_crime_monthly = pd.read_csv('rent_crime_monthly.csv')
+
+
 crime_monthly['Date'] = pd.to_datetime(crime_monthly['Date'])
 
 total_sentences_predictions = predictions[predictions['Target'] == 'Total Sentences'].sort_values(['Year','Region'])
@@ -51,7 +55,9 @@ location_data = {
 }
 
 location_df = pd.DataFrame(location_data)
-
+rent_crime_monthly = rent_crime_monthly[rent_crime_monthly['Location'].isin(location_df['Location'])]
+ren_monthly = rent_crime_monthly[['Time Frame','Median Rent']]
+ren_monthly['Time Frame'] = pd.to_datetime(ren_monthly['Time Frame'])
 st.title("Crime and Rent")
 
 
@@ -59,8 +65,8 @@ years_range = list(range(2025, 2034))
 months_range = list(range(1, 13))
 selected_year = st.selectbox("Year", years_range)
 selected_month = st.selectbox("Month", months_range)
-location = st.selectbox("Location", location_df['Location'])
-location_id = location_df[location_df['Location'] == location]['Location Id'].values[0]
+selected_location = st.selectbox("Location", location_df['Location'])
+location_id = location_df[location_df['Location'] == selected_location]['Location Id'].values[0]
 
 selected_date = pd.to_datetime(f'{selected_year}-{selected_month}-01')
 
@@ -74,11 +80,27 @@ else:
     selected_df['Crime_Rolling_Std_3'] = selected_df['Crime'].rolling(3,1).std()
     selected_df['Crime_Rolling_Std_6'] = selected_df['Crime'].rolling(6,1).std()
 
-if st.button("进行预测"):
-    features = selected_df.iloc[-1][['Crime_Rolling_Std_3', 'Crime_Rolling_Std_6']]
-    features['Location Id'] = location_id
-    dtest = xgb.DMatrix([features])
-    predictions = loaded_model.predict(dtest)
+if st.button("Predict"):
+    if location == "ALL":
+        last_date = df['Time Frame'].max()
+        selected_date = datetime(selected_year, selected_month, 1)
+        delta_months = (selected_date.year - last_date.year) * 12 + (selected_date.month - last_date.month)
+        predictions_per_location = {}
+        for location in location_df['Location']:
+            location_data = df[df['Location'] == location].set_index('Time Frame')
+            location_data = location_data.sort_index()  
+            y = location_data['Median Rent']
+            model = ARIMA(y, order=(1, 1, 1))
+            model_fit = model.fit()
+            forecast = model_fit.get_forecast(steps=delta_months)
+            predicted_rent = forecast.predicted_mean
+            predictions_per_location[location] = predicted_rent[-1]
+    else:
+        features = selected_df.iloc[-1][['Crime_Rolling_Std_3', 'Crime_Rolling_Std_6']]
+        features['Location Id'] = location_id
+        dtest = xgb.DMatrix([features])
+        predictions = loaded_model.predict(dtest)
+        
     
 st.write(predictions)
 
@@ -117,4 +139,4 @@ st.pydeck_chart(pdk.Deck(
 ))
 
 
-st.dataframe(selected_df)
+st.dataframe(predictions_per_location)
