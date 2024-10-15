@@ -84,50 +84,62 @@ location_id = location_df[location_df['Location'] == selected_location]['Locatio
 
 selected_date = pd.to_datetime(f'{selected_year}-{selected_month}-01')
 
-#Disable user input of Crime with ALL
+#Disable user input of Crime if "ALL" is selected
 if selected_location == "ALL":
     crime = st.number_input("Crime", value=0.0, step=0.1, disabled=True)
 else:
     crime = st.number_input("Crime", value=0.0, step=0.1)
 
 if st.button("Predict"):
+    # Using ARIMA if "ALL" is selected
     if selected_location == "ALL":
+        # Calculate the time difference to the selected date
         last_date = rent_monthly['Time Frame'].max()
         selected_date = pd.to_datetime(f'{selected_year}-{selected_month}-01')
         delta_months = (selected_date.year - last_date.year) * 12 + (selected_date.month - last_date.month)
         
         predictions_per_location = {}
+        # Loop through each location to make predictions
         for location in location_df['Location']:
+            # Filter data for the specific location
             location_data = rent_monthly[rent_monthly['Location'] == location].set_index('Time Frame')
             location_data = location_data.sort_index()
             loc_df = pd.DataFrame(location_data)
-            N = 13  
+            
+            N = 13  # Number of lag values to include
+            # Create lag features (previous rent values)
             for i in range(1, N + 1):
                 loc_df[f'lag_{i}'] = location_data['Median Rent'].shift(i)
 
             loc_df.dropna(inplace=True)
-            y = loc_df['Median Rent']
-            
+            y = loc_df['Median Rent']  # Set target variable 
+
+             # Fit ARIMA model with order (1, 2, 1)
             model = ARIMA(y, order=(1, 2, 1))
             model_fit = model.fit()
             
+            # Forecast for the number of months calculated (delta_months)
             forecast = model_fit.get_forecast(steps=delta_months)
-            predicted_rent = forecast.predicted_mean
-            predictions_per_location[location] = predicted_rent.iloc[-1]  
+            predicted_rent = forecast.predicted_mean # Get predicted rent 
+            predictions_per_location[location] = predicted_rent.iloc[-1]  # Store the last predicted rent value
+            
+        # Getting latitude and longitude    
         predictions_df = pd.DataFrame(list(predictions_per_location.items()), columns=['Location', 'Predicted Rent'])
         predictions_df = predictions_df[predictions_df['Location'] != 'ALL']
         merged_df = pd.merge(predictions_df, location_df, on='Location', how='left')
         
-        
+        # Set up the map's view state(New Zealand)
         view_state = pdk.ViewState(latitude=-40.9006, longitude=174.8860, zoom=5)
+        # Create a ScatterplotLayer for each location with predicted rent
         layer = pdk.Layer(
             'ScatterplotLayer',
             data=merged_df,
-            get_position='[Longitude, Latitude]',
+            get_position='[Longitude, Latitude]', # Get the coordinates for each location
             get_color='[200, 30, 0, 160]',
             get_radius=10000,  
             pickable=True
         )
+        # Tooltip to display when hovering over a point
         tooltip={
         "html": "<b>City:</b> {Location}<br><b>Average Rent:</b> ${Predicted Rent}",
         "style": {
@@ -136,25 +148,42 @@ if st.button("Predict"):
             }
         }
         
+        # Render the map with the scatterplot and tooltip
         st.pydeck_chart(pdk.Deck(
             initial_view_state=view_state,
             layers=[layer],
             tooltip=tooltip
         ))
+    # For a specific location, using model to predict
     else:
+        # Filter the dataset for the selected location and date range
         selected_df = total_sentences_predictions_monthly[(total_sentences_predictions_monthly['Date'] <= selected_date) & (total_sentences_predictions_monthly['Location'] == selected_location)]
+        
+        # Update crime value if provided
         if crime >0 :
             selected_df.loc[selected_df.index[-1], 'Crime'] = crime
+            
+        # Calculate rolling standard deviations of crime over 3 and 6 months
         selected_df['Crime_Rolling_Std_3'] = selected_df['Crime'].rolling(3,1).std()
         selected_df['Crime_Rolling_Std_6'] = selected_df['Crime'].rolling(6,1).std()
+        
+        # Get features for the prediction
         features = selected_df.iloc[-1][['Crime_Rolling_Std_3', 'Crime_Rolling_Std_6']]
         features['Location Id'] = location_id
-        dtest = xgb.DMatrix([features])
-        predictions = loaded_model.predict(dtest)
+        dtest = xgb.DMatrix([features]) # Create DMatrix for the XGBoost model
+         
+        # Use the loaded model to predict rent
+        predictions = loaded_model.predict(dtest) 
         predicted_rent = predictions[0]
+        
+         # Get the latitude and longitude for the selected location
         location_latitude = location_df.loc[location_df['Location'] == selected_location, 'Latitude'].values[0]
         location_longitude = location_df.loc[location_df['Location'] == selected_location, 'Longitude'].values[0]
+       
+        # Set up the map's view state for the specific location
         view_state = pdk.ViewState(latitude=location_latitude, longitude=location_longitude, zoom=10)
+        
+        # Create a ScatterplotLayer for the selected location
         layer = pdk.Layer(
             'ScatterplotLayer',
             data=[{"Longitude": location_longitude, "Latitude": location_latitude}],
@@ -163,6 +192,8 @@ if st.button("Predict"):
             get_radius=10000,
             pickable=True
         )
+        
+        # Tooltip to display when hovering over a point
         tooltip={
         "html": f"<b>City:</b> {selected_location}<br><b>Average Rent:</b> ${predicted_rent}",
         "style": {
@@ -171,6 +202,7 @@ if st.button("Predict"):
             }
         }
         
+        # Render the map with the scatterplot and tooltip
         st.pydeck_chart(pdk.Deck(
             initial_view_state=view_state,
             layers=[layer],
