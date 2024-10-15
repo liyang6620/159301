@@ -7,7 +7,7 @@ from datetime import datetime as dt
 from scipy.interpolate import CubicSpline
 from statsmodels.tsa.arima.model import ARIMA
 
-# Import the dataset 
+#Import the dataset 
 predictions = pd.read_csv('predictions.csv')
 crime_monthly = pd.read_csv('crime_monthly.csv')
 rent_crime_monthly = pd.read_csv('rent_crime_monthly.csv')
