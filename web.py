@@ -11,11 +11,14 @@ from statsmodels.tsa.arima.model import ARIMA
 predictions = pd.read_csv('predictions.csv')
 crime_monthly = pd.read_csv('crime_monthly.csv')
 rent_crime_monthly = pd.read_csv('rent_crime_monthly.csv')
+
+#Unify the different region names
 rent_crime_monthly['Location'] = rent_crime_monthly['Location'].replace('Manawatu-Whanganui', 'Manawatu-Wanganui')
 
 
 crime_monthly['Date'] = pd.to_datetime(crime_monthly['Date'])
 
+#Getting monthly crime
 total_sentences_predictions = predictions[predictions['Target'] == 'Total Sentences'].sort_values(['Year','Region'])
 total_sentences_predictions = total_sentences_predictions.loc[total_sentences_predictions.groupby(['Year', 'Region'])['MSE'].idxmin()]
 
@@ -46,10 +49,11 @@ total_sentences_predictions_monthly.reset_index(drop=True, inplace=True)
 total_sentences_predictions_monthly['Location'] = total_sentences_predictions_monthly['Location'].apply(lambda x: x if x == 'ALL' else x.replace(" Region", ""))
 total_sentences_predictions_monthly = pd.concat([crime_monthly, total_sentences_predictions_monthly])
 
-
+#Loaded models downloaded from AWS
 loaded_model = xgb.Booster()
 loaded_model.load_model('xgboost-model-0')
 
+#Creating location data
 location_data = {
     'Location Id': [0, 1, 2, 3, 4, 5 , 7, 8, 9, 13, 14, 15],
     'Location': ['ALL', 'Northland', 'Auckland', 'Waikato', 'Bay of Plenty', 'Gisborne', 
@@ -62,13 +66,15 @@ location_data = {
 }
 
 location_df = pd.DataFrame(location_data)
+
+#Retain only those locations that are present in several datasets
 rent_crime_monthly = rent_crime_monthly[rent_crime_monthly['Location'].isin(location_df['Location'])]
 rent_monthly = rent_crime_monthly[['Time Frame','Location','Median Rent']]
 rent_monthly['Time Frame'] = pd.to_datetime(rent_monthly['Time Frame'])
 
 st.title("Crime and Rent")
 
-
+#Getting input
 years_range = list(range(2025, 2034))  
 months_range = list(range(1, 13))
 selected_year = st.selectbox("Year", years_range)
@@ -78,13 +84,13 @@ location_id = location_df[location_df['Location'] == selected_location]['Locatio
 
 selected_date = pd.to_datetime(f'{selected_year}-{selected_month}-01')
 
+#Disable user input of Crime with ALL
 if selected_location == "ALL":
     crime = st.number_input("Crime", value=0.0, step=0.1, disabled=True)
 else:
     crime = st.number_input("Crime", value=0.0, step=0.1)
 
 if st.button("Predict"):
-    x= pd.DataFrame()
     if selected_location == "ALL":
         last_date = rent_monthly['Time Frame'].max()
         selected_date = pd.to_datetime(f'{selected_year}-{selected_month}-01')
